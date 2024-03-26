@@ -27,3 +27,4 @@ while {lexeme=yytext(); return RESERVADAS;}
 "." {return PUNTO;}
 {L}({L}|{D})* {lexeme=yytext(); return IDENTIFICADOR;}
 ("(-"{D}+")")|{D}+"."{D}+|{D}+ {lexeme=yytext(); return NUMERO;}
+"" {return ERROR;}

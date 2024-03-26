@@ -4,7 +4,9 @@ package org.umg.compiladores;
 
 import javax.swing.*;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
+import java.util.Scanner;
 
 public class ResultService {
 
@@ -16,9 +18,38 @@ public class ResultService {
         var fileChooser = new JFileChooser();
         var result = "";
         if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-            result = classifyToken(fileChooser.getSelectedFile());
+            result = classifyToken(parseFiled(fileChooser.getSelectedFile()));
         }
         return result;
+    }
+
+    private File parseFiled(File file) throws IOException {
+        int n;
+        var newFile = new File("/tmp/temp.txt");
+        var scanner = new Scanner(file, StandardCharsets.UTF_8);
+
+        var oneLine = new StringBuilder();
+        while (scanner.hasNextLine()) {
+            var line = scanner.nextLine();
+            if (line.isEmpty()) continue;
+            line = line.replaceAll("\n", "");
+            oneLine.append(line);
+        }
+
+        System.out.println(oneLine);
+        scanner.close();
+
+        if (newFile.exists()) {
+            if (newFile.delete()) System.out.println("Eliminado");;
+        } else {
+            newFile = new File("/tmp/temp.txt");
+            var fw = new FileWriter(newFile);
+            var bw = new BufferedWriter(fw);
+            bw.write(String.valueOf(oneLine));
+            bw.flush();
+        }
+
+        return newFile;
     }
 
     private String classifyToken(File file) throws IOException {
