@@ -17,7 +17,6 @@ public class ResultService {
     private final FileService fileService;
 
     public ResultService(FileService fileService) {
-        GenerateLexerService.readLexer();
         this.fileService = fileService;
     }
 
