@@ -1,87 +1,74 @@
 package org.umg.compiladores;
 
 
+import org.umg.compiladores.dto.ClassifyTokenDTO;
 
 import javax.swing.*;
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Scanner;
 
 public class ResultService {
 
-    public ResultService() {
+    private final FileService fileService;
+
+    public ResultService(FileService fileService) {
         GenerateLexerService.readLexer();
+        this.fileService = fileService;
     }
 
-    public String result() throws IOException {
+    public List<ClassifyTokenDTO> result() throws IOException {
         var fileChooser = new JFileChooser();
-        var result = "";
         if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-            result = classifyToken(parseFiled(fileChooser.getSelectedFile()));
+            return classifyToken(fileService.parseFiled(fileChooser.getSelectedFile()));
         }
+
+        result();
+        return new ArrayList<>();
+    }
+
+    private List<ClassifyTokenDTO> classifyToken(File file) throws IOException {
+        var reader = new BufferedReader(new FileReader(file));
+        var lexer = new Lexer(reader);
+        var result = new ArrayList<ClassifyTokenDTO>();
+
+        while (true) {
+            var token = lexer.yylex();
+            if (token == null) {
+                break;
+            }
+            switch (Objects.requireNonNull(token)) {
+                case RESERVADAS:
+                case OPERADOR:
+                case IDENTIFICADOR:
+                case NUMERO:
+                case AGRUPADOR:
+                case SIMBOLO:
+                    var classifyToken = new ClassifyTokenDTO(lexer.yytext().trim(), token, searchLine(lexer.yytext().trim()));
+                    result.add(classifyToken);
+                    break;
+                default:
+                    result.add(new ClassifyTokenDTO(lexer.yytext(), Token.ERROR, searchLine(lexer.yytext())));
+                    break;
+            }
+        }
+
         return result;
     }
 
-    private File parseFiled(File file) throws IOException {
-        int n;
-        var newFile = new File("/tmp/temp.txt");
-        var scanner = new Scanner(file, StandardCharsets.UTF_8);
-
-        var oneLine = new StringBuilder();
-        while (scanner.hasNextLine()) {
-            var line = scanner.nextLine();
-            if (line.isEmpty()) continue;
-            line = line.replaceAll("\n", "");
-            oneLine.append(line);
-        }
-
-        System.out.println(oneLine);
-        scanner.close();
-
-        if (newFile.exists()) {
-            if (newFile.delete()) System.out.println("Eliminado");;
-        } else {
-            newFile = new File("/tmp/temp.txt");
-            var fw = new FileWriter(newFile);
-            var bw = new BufferedWriter(fw);
-            bw.write(String.valueOf(oneLine));
-            bw.flush();
-        }
-
-        return newFile;
-    }
-
-    private String classifyToken(File file) throws IOException {
-        var reader = new BufferedReader(new FileReader(file));
-        var lexer = new Lexer(reader);
-        var result = new StringBuilder();
-        while (true) {
-            var tokens = lexer.yylex();
-            if (tokens == null) {
-                break;
-            }
-            switch (Objects.requireNonNull(tokens)) {
-                case RESERVADAS:
-                case IGUAL:
-                case SUMA:
-                case RESTA:
-                case MULTIPLICACION:
-                case DIVISION:
-                case IDENTIFICADOR:
-                case NUMERO:
-                case NUMERO_DECIMAL:
-                case PARENTESIS_INICIO:
-                case PARENTESIS_FINAL:
-                case PUNTO:
-                    result.append(lexer.yytext()).append(": Es ").append(tokens).append("\n");
-                    break;
-                default:
-                    result.append("Simbolo no definido ").append(lexer.yytext()).append("\n");
-                    break;
+    private Integer searchLine(String line) {
+        for (var entry : this.fileService.getLines().entrySet()) {
+            var key = entry.getKey();
+            if (key.contains(line)) {
+                return entry.getValue();
             }
         }
-        return String.valueOf(result);
+
+        return null;
     }
 
 }
