@@ -1,0 +1,31 @@
+package org.umg.compiladores;
+
+import java_cup.runtime.Symbol;
+
+parser code 
+{:
+    private Symbol symbol;
+
+    public void syntax_error(Symbol s) {
+        this.symbol = s;
+    }
+
+    public Symbol getSymbol(){
+        return this.symbol;
+    }
+:};
+
+terminal RESERVADAS, OPERADOR, AGRUPADOR, SIMBOLO,
+    IDENTIFICADOR, NUMERO, ERROR;
+non terminal INICIO, SENTENCIA, DECLARACION, CONDICION;
+
+start with INICIO;
+
+INICIO ::= SENTENCIA;
+
+SENTENCIA ::= RESERVADAS | OPERADOR | AGRUPADOR | SIMBOLO | IDENTIFICADOR | NUMERO | ERROR | DECLARACION;
+CONDICION ::= RESERVADAS | NUMERO OPERADOR NUMERO;
+SENTENCIA ::= RESERVADAS AGRUPADOR CONDICION AGRUPADOR AGRUPADOR SENTENCIA AGRUPADOR;
+DECLARACION ::= RESERVADAS IDENTIFICADOR OPERADOR NUMERO;
+    
+

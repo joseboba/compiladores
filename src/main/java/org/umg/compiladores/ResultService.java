@@ -16,7 +16,7 @@ public class ResultService {
 
     private final FileService fileService;
 
-    public ResultService(FileService fileService) {
+    public ResultService(FileService fileService) throws Exception{
         GenerateLexerService.readLexer();
         this.fileService = fileService;
     }

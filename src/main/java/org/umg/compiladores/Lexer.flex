@@ -5,22 +5,22 @@ import static org.umg.compiladores.Token.*;
 %type Token
 L=[a-zA-Z\u00f1\u00d1]+
 D=[0-9]+
-O=[=|+|-|*|/]
+O=[=|+|-|*|/,==]
 A=[( | ) | { | }]
 S=["!" | "@" | "#" | "$" | "%" | "^" | "&" | ":" | ";" | "," | "." | "~" | "¡" | "¿" | "?" | "'" | ","]
-R=[if,else,while,for]
+R=[if,else,while,for, true, false, int]
 espacio=[ ,\t,\r,\n]+
 %{
     public String lexeme;
 %}
 %%
-{R} {return RESERVADAS;}
+{R} {lexeme=yytext(); return RESERVADAS;}
 {espacio} {/*Ignore*/}
 "//".* {/*Ignore*/}
 "/*".*."*/" {/*Ignore*/}
-{O} {return OPERADOR;}
-{A} {return AGRUPADOR;}
-{S} {return SIMBOLO;}
+{O} {lexeme=yytext(); return OPERADOR;}
+{A} {lexeme=yytext(); return AGRUPADOR;}
+{S} {lexeme=yytext(); return SIMBOLO;}
 {L}({L}|{D})* {lexeme=yytext(); return IDENTIFICADOR;}
 ("(-"{D}+")")|{D}+"."{D}+|{D}+ {lexeme=yytext(); return NUMERO;}
-"" {return ERROR;}
+"" {lexeme=yytext(); return ERROR;}
