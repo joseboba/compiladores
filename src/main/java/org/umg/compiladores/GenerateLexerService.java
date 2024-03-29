@@ -1,6 +1,7 @@
 package org.umg.compiladores;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,7 +31,8 @@ public class GenerateLexerService {
         JFlex.Main.generate(file2);
         System.out.println("ruta " + routeToSyntax[2]);
         java_cup.Main.main(routeToSyntax);
-   
+         
+        
         /*
         Path symbolsRoute = Paths.get("D:/Documentos 2024/UMG/Septimo semestre/Compiladores/Analizador sintactico/ProyectoArreglado/compiladores/src/main/java/org/umg/compiladores/sym.java");
         
