@@ -5,10 +5,11 @@ import static org.umg.compiladores.Token.*;
 %type Token
 L=[a-zA-Z\u00f1\u00d1]+
 D=[0-9]+
-O=[=|+|-|*|/]
+O=[=|+|-|*|/|-]
 A=[( | ) | { | }]
-S=["!" | "@" | "#" | "$" | "%" | "^" | "&" | ":" | ";" | "," | "." | "~" | "¡" | "¿" | "?" | "'" | ","]
-R=[if,else,while,for]
+S=[!@#\$%\^&:;,.~¡¿?'`"\""]
+R=if else while for
+N=("(-"{D}+")")|{D}+"."{D}+|{D}+
 espacio=[ ,\t,\r,\n]+
 %{
     public String lexeme;
@@ -22,5 +23,10 @@ espacio=[ ,\t,\r,\n]+
 {A} {return AGRUPADOR;}
 {S} {return SIMBOLO;}
 {L}({L}|{D})* {lexeme=yytext(); return IDENTIFICADOR;}
-("(-"{D}+")")|{D}+"."{D}+|{D}+ {lexeme=yytext(); return NUMERO;}
-"" {return ERROR;}
+{N} {lexeme=yytext(); return NUMERO;}
+{L}({L}|{N})*{S}+ { return ERROR; }
+{N}({N}|{L})*{S}+ { return ERROR; }
+{N}{L}+ { return ERROR; }
+{D}+"."{L}+ { return ERROR; }
+{L}+{D}+"."{D}+ {return ERROR;}
+. {return ERROR;}
