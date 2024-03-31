@@ -35,7 +35,7 @@ public class FileService {
         if (newFile.exists()) {
             if (newFile.delete()) System.out.println("Eliminado");
 
-            newFile = new File("/tmp/temp.txt");
+            newFile = new File("temp.txt");
             var fw = new FileWriter(newFile);
             var bw = new BufferedWriter(fw);
             bw.write(String.valueOf(oneLine));
