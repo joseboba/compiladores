@@ -52,7 +52,7 @@ public class ResultService {
                     result.add(classifyToken);
                     break;
                 default:
-                    result.add(new ClassifyTokenDTO(lexer.yytext(), Token.ERROR, searchLine(lexer.yytext())));
+                    System.out.println(token.name() + " " + lexer.yytext());
                     break;
             }
         }
