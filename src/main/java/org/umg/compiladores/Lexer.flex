@@ -5,7 +5,7 @@ import static org.umg.compiladores.Token.*;
 %type Token
 L=[a-zA-Z\u00f1\u00d1]+
 D=[0-9]+
-O=[=|+|-|*|/|-]
+O=[=|+|-|*|/|-|==]
 A=[( | ) | { | }]
 S=[!@#\$%\^&:;,.~¡¿?'`"\""]
 R=if else while for
