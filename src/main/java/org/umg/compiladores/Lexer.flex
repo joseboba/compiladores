@@ -8,14 +8,20 @@ D=[0-9]+
 O=[=|+|-|*|/|-|==]
 A=[( | ) | { | }]
 S=[!@#\$%\^&:;,.~¡¿?'`"\""]
-R=if else while for
 N=("(-"{D}+")")|{D}+"."{D}+|{D}+
 espacio=[ ,\t,\r,\n]+
 %{
     public String lexeme;
 %}
 %%
-{R} {return RESERVADAS;}
+"while" {lexeme=yytext(); return RESERVADAS; }
+"for"   {lexeme=yytext(); return RESERVADAS; }
+"if"    {lexeme=yytext(); return RESERVADAS; }
+"do"    {lexeme=yytext(); return RESERVADAS; }
+"else"  {lexeme=yytext(); return RESERVADAS; }
+"int"   {lexeme=yytext(); return RESERVADAS; }
+"class" {lexeme=yytext(); return RESERVADAS; }
+"public" {lexeme=yytext(); return RESERVADAS; }
 {espacio} {/*Ignore*/}
 "//".* {/*Ignore*/}
 "/*".*."*/" {/*Ignore*/}
