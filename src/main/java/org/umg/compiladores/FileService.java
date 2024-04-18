@@ -11,12 +11,12 @@ import java.util.Scanner;
 public class FileService {
 
     private HashMap<String, Integer> lines = new HashMap<>();
-
+    public String datos;
     public FileService() {
     }
 
     File parseFiled(File file) throws IOException {
-        var newFile = new File("/tmp/temp.txt");
+        var newFile = new File("temp.txt");
         var scanner = new Scanner(file, StandardCharsets.UTF_8);
 
         var oneLine = new StringBuilder();
@@ -31,6 +31,7 @@ public class FileService {
         }
 
         System.out.println(oneLine);
+        datos = oneLine.toString();
         scanner.close();
         if (newFile.exists()) {
             if (newFile.delete()) System.out.println("Eliminado");
@@ -61,5 +62,5 @@ public class FileService {
     public void cleanHasMap() {
         this.lines = new HashMap<>();
     }
-
+    
 }
