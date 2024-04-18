@@ -19,14 +19,16 @@ public class View {
     String numeros = "^[0-9]+(?:\\.[0-9]+)?$";
     String simbolos = "^([!@#$%^&:;,.~¡¿?'\\\\])+\\n?$";
     String agrupadores = "^([{}()\\[\\]]+)(\n?)$";
+    String simbolosAritmeticos = "^[0-9()+\\-*/^]+$";
     List<String> operadores = Arrays.asList("+","-","*","/","-","++","==","--","=");
     List<String> palabrasReservadas = Arrays.asList("if","else","for","while","do","int","class", "public");
     Pattern expresionIdentificador = Pattern.compile(identificador);
     Pattern expresionNumeros = Pattern.compile(numeros);
     Pattern expresionSimbolos = Pattern.compile(simbolos);
     Pattern expresionAgrupadores = Pattern.compile(agrupadores);
+    Pattern expresionAritmetica = Pattern.compile(simbolosAritmeticos);
     List<String> errores = new ArrayList<>(); 
-
+    
     public View(FileService fileService) {
         this.fileService = fileService;
     }
@@ -40,7 +42,7 @@ public class View {
         frame.setSize(600, 400);
         frame.add(scrollPane);
         frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -61,6 +63,7 @@ public class View {
     }
 
     public void analizadorSintactico(){
+        
         errores.clear(); 
         String[] valores = fileService.datos.split(" ");
         String valorDeWhile = "";
@@ -71,18 +74,23 @@ public class View {
             if(validarToken(valores[i])){
                 // validacion de ciclo while
                 if(valores[i].toLowerCase().equals("while") || seEstaValidandoCicloWhile) {
-                    seEstaValidandoCicloWhile= true;
-                    if(caracteresWhile <= 12){
+                    seEstaValidandoCicloWhile = true;
+                    if(caracteresWhile <= 10){
                         caracteresWhile++;
                         valorDeWhile += valores[i] + " ";
                      
+                        if(i==valores.length - 1){
+                            if(!valorDeWhile.equals("while ( true ) { int valor = 2 ; }")){
+                                errores.add("Ciclo while inválido: " + valorDeWhile + " ");
+                            }
+                            valorDeWhile = "";
+                        }
                     } else {  
                         caracteresWhile = 0;
                         seEstaValidandoCicloWhile = false;
                        
-                        if(!valorDeWhile.equals("while ( 1 == 1 ) { int valor = 2 ; }")){
-                            errores.add("Ciclo while inválido: " + valorDeWhile);
-                            System.out.println("Valor" + valorDeWhile);
+                        if(!valorDeWhile.equals("while ( true ) { int valor = 2 ; }")){
+                            errores.add("Ciclo while inválido: " + valorDeWhile + " ");
                         }
                         valorDeWhile = "";
                     }
@@ -100,8 +108,8 @@ public class View {
                     }
                 }
                 
-                
-                // se valida se espera un operador y se espera un número en expresión int identificador = número
+
+                // se valida se espera un operador y se espera un punto y coma int identificador = valor ;
                 if(expresionIdentificador.matcher(valores[i]).matches() 
                         && !palabrasReservadas.contains(valores[i])
                         && i > 0 && i < valores.length - 1){
@@ -111,14 +119,23 @@ public class View {
                                 && expresionNumeros.matcher(valores[i+1]).matches() && 
                                 !valores[i+1].equals("=")){
                             errores.add("Se espera un operador para declarar bien la variable: " + valores[i-1] + " " + 
-                                valores[i] + " " + valores[i+1]);
-                        } else if (i + 2 < valores.length - 1 ) {
+                                valores[i] + " " + valores[i+1] + " ");
+                        } else if (i + 3 < valores.length - 1 ) {
+                           
                             if(valores[i-1].toLowerCase().equals("int") && valores[i+1].equals("=") && 
-                                 !expresionNumeros.matcher(valores[i+2]).matches()){
-                                errores.add("Se espera un número como valor de variable: " + valores[i-1] + " " + 
-                                valores[i] + " " + valores[i+1] + " " + valores[i+2]);
+                                 !valores[i+3].equals(";")){
+                                errores.add("Se espera un punto y coma para declarar variable: " + valores[i-1] + " " + 
+                                valores[i] + " " + valores[i+1] + " " + valores[i+2] + " ");
                             }
                         }
+                    }
+                }
+                
+                // se valida que al declarar variable tipo int se coloque un identificador
+                if(valores[i].equals("int") && valores.length <= 4){
+                    if(!expresionIdentificador.matcher(valores[i+1]).matches()){
+                        errores.add("Se espera un identificador en: " + valores[i] + " " + 
+                                valores[i+1] + " ");
                     }
                 }
                 
@@ -137,9 +154,9 @@ public class View {
                             }
                         } 
                     } else if (valores[i+1] != null) {
-                            if(!valores[i+1].equals("{")){
+                            if(!expresionAgrupadores.matcher(valores[i+1]).matches()){
                                 errores.add("Se espera un signo de agrupación: " + valores[i] + " " + 
-                                    valores[i+1]);
+                                    valores[i+1]+ "  ");
                             }
                     }
                 }
@@ -155,7 +172,7 @@ public class View {
                         }
                     }
                 }
-                
+               /* 
                 // se valida condición
                 if(valores[i].equals("==") && i < valores.length - 1 && i > 0){
                     if(valores[i-1] != null && valores[i+1] != null){
@@ -173,7 +190,7 @@ public class View {
                                    + valores[i-1] + " " + valores[i] + " " + valores[i+1] );
                         }
                     }
-                }
+                }*/
                 
                 // se valida uso de expresión else
                 if(valores[i].equals("else") && i > 0 && i < valores.length - 1){
@@ -191,7 +208,8 @@ public class View {
                 // validación de expresión aritmética
                 if(operadores.contains(valores[i]) && i < valores.length 
                         && !valores[i].equals("=") 
-                        && !valores[i].equals("==") ){
+                        && !valores[i].equals("==") && !valores[i-1].equals(")") 
+                        && !valores[i+1].equals("(")){
                  
                     if(!expresionNumeros.matcher(valores[i-1]).matches() || 
                        !expresionNumeros.matcher(valores[i+1]).matches()){
@@ -199,7 +217,8 @@ public class View {
                                     + valores[i-1] + " " + valores[i] + " " + valores[i+1]);
                     }
                 } else if (operadores.contains(valores[i]) && !valores[i].equals("=") && 
-                        !valores[i].equals("==") ){
+                        !valores[i].equals("==") && !valores[i-1].equals(")")
+                        && !valores[i+1].equals("(")){
                     errores.add("Expresión aritmética incorrecta : " 
                                     + valores[i-1] + " " + valores[i]);
                 }
@@ -211,6 +230,7 @@ public class View {
                             + valores[i] + " " + valores[i+1]);
                     }
                 }
+                
             } else {
                 if(!valores[i].trim().equals(" ") && !valores[i].equals("") && !valores[i].equals("\n")){
                     errores.add(valores[i]);
@@ -220,6 +240,7 @@ public class View {
         
         if(errores.isEmpty()){
           JOptionPane.showMessageDialog(null, "Se finalizó el análisis sintáctico, todo está correcto");
+          this.crearArbol();
         } else {
             String mensaje = "";
           
@@ -241,5 +262,27 @@ public class View {
                 || palabrasReservadas.contains(valor) 
                 || valor.equals("//") || valor.equals("/*") || valor.equals("*/");
     }
-    
+
+    public void crearArbol(){
+        if(fileService.datos.matches("^[0-9()+\\-*/^\\s]*$")){
+             
+            ArbolBinarioExp arbol = new ArbolBinarioExp(fileService.datos.replaceAll("\\s+", ""));
+          
+            LienzoArbol lienzo = new LienzoArbol();
+            lienzo.setArbol(arbol);
+            JFrame ventana = new JFrame("Árbol sintáctico");
+            ventana.getContentPane().add(lienzo);
+            ventana.setSize(800,600);
+            ventana.setVisible(true);
+
+            ventana.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            ventana.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent e) {
+
+                }
+            });
+                         
+          }
+    }
 }

@@ -10,4 +10,4 @@ public class Main {
         var result = resultService.result();
         view.showResult(result);
     }
-}
+} 
