@@ -1,6 +1,7 @@
 package org.umg.compiladores;
 
 import org.umg.compiladores.dto.ClassifyTokenDTO;
+import org.umg.compiladores.dto.SemanticAnalysisResult;
 
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
@@ -27,7 +28,8 @@ public class View {
     Pattern expresionSimbolos = Pattern.compile(simbolos);
     Pattern expresionAgrupadores = Pattern.compile(agrupadores);
     Pattern expresionAritmetica = Pattern.compile(simbolosAritmeticos);
-    List<String> errores = new ArrayList<>(); 
+    List<String> errores = new ArrayList<>();
+    List<ClassifyTokenDTO> classifyTokenDTOSGlobal = new ArrayList<>();
     
     public View(FileService fileService) {
         this.fileService = fileService;
@@ -47,6 +49,7 @@ public class View {
             @Override
             public void windowClosing(WindowEvent e) {
                 fileService.cleanHasMap();
+                classifyTokenDTOSGlobal = classifyTokenDTOS;
                 analizadorSintactico();
             }
         });
@@ -279,10 +282,23 @@ public class View {
             ventana.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosing(WindowEvent e) {
-
+                    analizadorSemantico();
                 }
             });
                          
           }
+    }
+
+
+    public void analizadorSemantico() {
+        SemanticAnalysisResult result = SemanticAnalyzer.evaluateExpression(this.fileService.datos);
+
+        if (result.success) {
+            JOptionPane.showMessageDialog(null, "Se finalizó el análisis semántico, todo está correcto");
+        } else {
+            JOptionPane.showMessageDialog(null, "Se finalizó el análisis semántico, contiene el siguiente error: " + result.errorMessage);
+        }
+
+
     }
 }
