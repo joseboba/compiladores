@@ -83,16 +83,18 @@ public class View {
                         valorDeWhile += valores[i] + " ";
                      
                         if(i==valores.length - 1){
-                            if(!valorDeWhile.equals("while ( true ) { int valor = 2 ; }")){
+                           
+                            if(!valorDeWhile.equals("while ( true ) { int valor = 2 ; } ")){
                                 errores.add("Ciclo while inválido: " + valorDeWhile + " ");
                             }
                             valorDeWhile = "";
+                            seEstaValidandoCicloWhile = false;
                         }
                     } else {  
                         caracteresWhile = 0;
                         seEstaValidandoCicloWhile = false;
-                       
-                        if(!valorDeWhile.equals("while ( true ) { int valor = 2 ; }")){
+                      
+                        if(!valorDeWhile.equals("while ( true ) { int valor = 2 ; } ")){
                             errores.add("Ciclo while inválido: " + valorDeWhile + " ");
                         }
                         valorDeWhile = "";
@@ -100,7 +102,7 @@ public class View {
                 }
                 
                 // se valida orden de asignación de un valor a identificador
-                if(valores[i].equals("=")){
+                if(valores[i].equals("=") && i - 2 >= 0){
                     if(valores[i-2] != null && valores[i-1] != null && valores[i+1] != null){
                         if(expresionIdentificador.matcher(valores[i-2]).matches() 
                            && valores[i-1].toLowerCase().equals("int") 
@@ -175,26 +177,7 @@ public class View {
                         }
                     }
                 }
-               /* 
-                // se valida condición
-                if(valores[i].equals("==") && i < valores.length - 1 && i > 0){
-                    if(valores[i-1] != null && valores[i+1] != null){
-                        if(!(expresionNumeros.matcher(valores[i-1]).matches() 
-                                && expresionNumeros.matcher(valores[i+1]).matches())
-                           && !(expresionIdentificador.matcher(valores[i-1]).matches() 
-                                && expresionIdentificador.matcher(valores[i+1]).matches())
-                           && !(expresionAgrupadores.matcher(valores[i-1]).matches() 
-                                && expresionAgrupadores.matcher(valores[i+1]).matches())
-                           && !(expresionSimbolos.matcher(valores[i-1]).matches() 
-                                && expresionSimbolos.matcher(valores[i+1]).matches())
-                           && !(palabrasReservadas.contains(valores[i-1]) 
-                                && palabrasReservadas.contains(valores[i+1]))){
-                           errores.add("Se espera una condición con tokens del mismo tipo: " 
-                                   + valores[i-1] + " " + valores[i] + " " + valores[i+1] );
-                        }
-                    }
-                }*/
-                
+            
                 // se valida uso de expresión else
                 if(valores[i].equals("else") && i > 0 && i < valores.length - 1){
                     if(valores[i-1] != null && valores[i+1] != null) {
