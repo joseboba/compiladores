@@ -8,6 +8,7 @@ package org.umg.compiladores;
  *
  * @author Javier
  */
+
 public class ArbolBinarioExp {
     
     NodoArbol raiz;
@@ -66,6 +67,9 @@ public class ArbolBinarioExp {
             case '-':
                 p=10;
                 break;
+            case '=':
+                p=5;  // Baja prioridad para el operador '='
+                break;
             default:
                 p=0;
                 break;
@@ -75,69 +79,50 @@ public class ArbolBinarioExp {
     }
     
     private boolean esOperador(char c) {
-        boolean resultado;
-        
-        switch(c) {
-            case '(':
-            case ')':
-            case '*':
-            case '^':
-            case '/':
-            case '+':
-            case '-':
-                resultado = true;
-                break;
-            default:
-                resultado = false;
-        }
-        
-        return resultado;
+        return "()*^/+->=".indexOf(c) >= 0;
+    }
+    
+    private boolean esLetra(char c) {
+        return Character.isLetter(c);
     }
     
     private NodoArbol creaArbolBE(String cadena){
-        PilaArbolExp pilaOperadores;
-        PilaArbolExp pilaExpresiones;
+        PilaArbolExp pilaOperadores = new PilaArbolExp();
+        PilaArbolExp pilaExpresiones = new PilaArbolExp();
         NodoArbol token;
         NodoArbol op1;
         NodoArbol op2;
         NodoArbol op;
         boolean seRecibeOperando = false;
-        pilaOperadores = new PilaArbolExp();
-        pilaExpresiones = new PilaArbolExp();
-        
         char caracterEvaluado;
         
-        for(int i=0;i<cadena.length();i++){
+        for(int i=0; i<cadena.length(); i++){
             caracterEvaluado = cadena.charAt(i);
             token = new NodoArbol(caracterEvaluado);
+            
             if(!esOperador(caracterEvaluado)){
                 if(!seRecibeOperando){
                     seRecibeOperando = true;
                     pilaExpresiones.insertar(token);
                 } else {
                     String aux = pilaExpresiones.quitar().dato.toString();
-                    
                     aux = aux + caracterEvaluado;
                     token = new NodoArbol(aux);
                     pilaExpresiones.insertar(token);
                 }
-                
-            }
-            else { //es operador
+            } else { //es operador
                 seRecibeOperando = false;
                 switch(caracterEvaluado){
                     case '(':
                         pilaOperadores.insertar(token);
                         break;
                     case ')':
-                        while(!pilaOperadores.pilaVacia() && 
-                                !pilaOperadores.topePila().dato.equals('(')){
+                        while(!pilaOperadores.pilaVacia() && !pilaOperadores.topePila().dato.equals('(')){
                             op2 = pilaExpresiones.quitar();
                             op1 = pilaExpresiones.quitar();
                             op = pilaOperadores.quitar();
                             op = creaSubArbol(op2, op1, op);
                             pilaExpresiones.insertar(op);
-                    
                         }
                         pilaOperadores.quitar();
                         break;
@@ -147,31 +132,28 @@ public class ArbolBinarioExp {
                             op2 = pilaExpresiones.quitar();
                             op1 = pilaExpresiones.quitar();
                             op = pilaOperadores.quitar();
-                            
                             op = creaSubArbol(op2, op1, op);
-                            
                             pilaExpresiones.insertar(op);
                         }
-                        
                         pilaOperadores.insertar(token);
                 }
             }
         }
         
-         while(!pilaOperadores.pilaVacia()){
-                op2 = pilaExpresiones.quitar();
-                op1 = pilaExpresiones.quitar();
-                op = pilaOperadores.quitar();
-                op = creaSubArbol(op2, op1, op);
-                pilaExpresiones.insertar(op);
-            }
-            
-            op = pilaExpresiones.quitar();
-            
-            return op;
+        while(!pilaOperadores.pilaVacia()){
+            op2 = pilaExpresiones.quitar();
+            op1 = pilaExpresiones.quitar();
+            op = pilaOperadores.quitar();
+            op = creaSubArbol(op2, op1, op);
+            pilaExpresiones.insertar(op);
+        }
+        
+        op = pilaExpresiones.quitar();
+        
+        return op;
     }
     
-    public  double evaluaExpresion(){
+    public double evaluaExpresion(){
         return evalua(raiz);
     }
     
@@ -179,30 +161,32 @@ public class ArbolBinarioExp {
         double acum = 0;
         
         if(!esOperador(subArbol.dato.toString().charAt(0))){
+            if(esLetra(subArbol.dato.toString().charAt(0))){
+                throw new UnsupportedOperationException("No se puede evaluar una expresión con variables no definidas.");
+            }
             return Double.parseDouble(subArbol.dato.toString());
         } else {
             switch (subArbol.dato.toString().charAt(0)) {
                 case '^':
-                    acum = acum + Math.pow(evalua(subArbol.izquierdo),evalua(subArbol.derecho));
+                    acum = Math.pow(evalua(subArbol.izquierdo), evalua(subArbol.derecho));
                     break;
                 case '*':
-                    acum = acum + evalua(subArbol.izquierdo) * evalua(subArbol.derecho);
+                    acum = evalua(subArbol.izquierdo) * evalua(subArbol.derecho);
                     break;
                 case '/':
-                    acum = acum + evalua(subArbol.izquierdo) / evalua(subArbol.derecho);
+                    acum = evalua(subArbol.izquierdo) / evalua(subArbol.derecho);
                     break;
                 case '+':
-                    acum = acum + evalua(subArbol.izquierdo) + evalua(subArbol.derecho);
+                    acum = evalua(subArbol.izquierdo) + evalua(subArbol.derecho);
                     break;
                 case '-':
-                    acum = acum + evalua(subArbol.izquierdo) - evalua(subArbol.derecho);
+                    acum = evalua(subArbol.izquierdo) - evalua(subArbol.derecho);
                     break;
-                
+                case '=':
+                    throw new UnsupportedOperationException("El operador '=' no es evaluable en esta implementación.");
             }
         }
         
         return acum;
     }
 }
-
-    
