@@ -8,6 +8,6 @@ public class Main {
         var resultService = new ResultService(fileService);
         var view = new View(fileService);
         var result = resultService.result();
-        view.showResult(result);
+        view.showResult(result, fileService.getFile());
     }
 } 
