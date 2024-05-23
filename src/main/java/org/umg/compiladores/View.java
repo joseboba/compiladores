@@ -295,6 +295,7 @@ public class View {
         if (semantic.getErrors() > 0) {
             var frame = new BulletPointFrame(semantic.getListErrors());
             frame.setVisible(true);
+            return;
         }
 
         JOptionPane.showMessageDialog(null, "Se finalizó el análisis semántico, todo está correcto");
