@@ -49,6 +49,7 @@ public class View {
             @Override
             public void windowClosing(WindowEvent e) {
                 fileService.cleanHasMap();
+               // fileService.cleanAllLines();
                 classifyTokenDTOSGlobal = classifyTokenDTOS;
                 analizadorSintactico();
             }
@@ -192,7 +193,7 @@ public class View {
                 }
                 
                 // validación de expresión aritmética
-                if(operadores.contains(valores[i]) && i < valores.length 
+              /*  if(operadores.contains(valores[i]) && i < valores.length 
                         && !valores[i].equals("=") 
                         && !valores[i].equals("==") && !valores[i-1].equals(")") 
                         && !valores[i+1].equals("(")){
@@ -207,7 +208,7 @@ public class View {
                         && !valores[i+1].equals("(")){
                     errores.add("Expresión aritmética incorrecta : " 
                                     + valores[i-1] + " " + valores[i]);
-                }
+                }*/
                 
                 // validación inicio de if
                 if(valores[i].equals("if") && i < valores.length) {
@@ -250,12 +251,19 @@ public class View {
     }
 
     public void crearArbol(){
-        if(fileService.datos.matches("^[0-9()+\\-*/^\\s]*$")){
-             
-            ArbolBinarioExp arbol = new ArbolBinarioExp(fileService.datos.replaceAll("\\s+", ""));
-          
-            LienzoArbol lienzo = new LienzoArbol();
-            lienzo.setArbol(arbol);
+         LienzoArbol lienzo = new LienzoArbol();
+
+        for (String cadena : fileService.getAllLines()) {
+            if(cadena.matches("^[0-9a-zA-Z()+\\-*/^=\\s]*$")){
+           
+                ArbolBinarioExp arbol = new ArbolBinarioExp(cadena.replaceAll("\\s+", ""));
+                lienzo.setArbol(arbol);
+            }
+        }
+       
+           
+            
+         
             JFrame ventana = new JFrame("Árbol sintáctico");
             ventana.getContentPane().add(lienzo);
             ventana.setSize(800,600);
@@ -269,7 +277,7 @@ public class View {
                 }
             });
                          
-          }
+          
     }
 
 
