@@ -32,13 +32,14 @@ public class FileService {
             var line = scanner.nextLine();
             if (line.isEmpty()) continue;
             setLines(line, i);
-            allLines.add(line.replaceAll(";", "") + " ");
+            if (!line.contains("int")) {
+                allLines.add(line.replaceAll(";", "") + " ");
+            }
             line = line.replaceAll("\n", "");
             oneLine.append(line);
             i++;
         }
 
-        System.out.println(oneLine);
         datos = oneLine.toString();
         scanner.close();
         if (newFile.exists()) {

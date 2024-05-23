@@ -52,7 +52,6 @@ public class View {
             @Override
             public void windowClosing(WindowEvent e) {
                 fileService.cleanHasMap();
-                fileService.cleanAllLines();
                 classifyTokenDTOSGlobal = classifyTokenDTOS;
                 analizadorSintactico(fileReader);
             }
@@ -258,18 +257,19 @@ public class View {
          LienzoArbol lienzo = new LienzoArbol();
 
         for (String cadena : fileService.getAllLines()) {
-            System.out.println(cadena);
             if(cadena.matches("^[0-9a-zA-Z()+\\-*/^=\\s]*$")){
-                System.out.println("cadena adentro");
                 ArbolBinarioExp arbol = new ArbolBinarioExp(cadena.replaceAll("\\s+", ""));
                 lienzo.setArbol(arbol);
             }
         }
 
             JFrame ventana = new JFrame("Árbol sintáctico");
-            ventana.getContentPane().add(lienzo);
-            ventana.setSize(800,600);
+            JScrollPane scrollPane = new JScrollPane(lienzo);
+            ventana.getContentPane().add(scrollPane);
+
+            ventana.setSize(800, 600);
             ventana.setVisible(true);
+            ventana.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
             ventana.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             ventana.addWindowListener(new WindowAdapter() {
