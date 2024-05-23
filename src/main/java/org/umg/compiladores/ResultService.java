@@ -52,7 +52,6 @@ public class ResultService {
                     result.add(classifyToken);
                     break;
                 default:
-                    System.out.println(token.name() + " " + lexer.yytext());
                     break;
             }
         }

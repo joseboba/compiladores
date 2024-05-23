@@ -24,6 +24,7 @@ espacio=[ ,\t,\r,\n]+
 "public" {lexeme=yytext(); return RESERVADAS; }
 "true" {lexeme=yytext(); return RESERVADAS; }
 "false" {lexeme=yytext(); return RESERVADAS; }
+"main" {lexeme=yytext(); return RESERVADAS; }
 {espacio} {/*Ignore*/}
 "//".* {/*Ignore*/}
 "/*".*."*/" {/*Ignore*/}
