@@ -32,7 +32,7 @@ public class FileService {
             var line = scanner.nextLine();
             if (line.isEmpty()) continue;
             setLines(line, i);
-            allLines.add(line);
+            allLines.add(line.replaceAll(";", ""));
             line = line.replaceAll("\n", "");
             oneLine.append(line);
             i++;

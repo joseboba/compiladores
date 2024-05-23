@@ -258,7 +258,9 @@ public class View {
          LienzoArbol lienzo = new LienzoArbol();
 
         for (String cadena : fileService.getAllLines()) {
+            System.out.println(cadena);
             if(cadena.matches("^[0-9a-zA-Z()+\\-*/^=\\s]*$")){
+                System.out.println("cadena adentro");
                 ArbolBinarioExp arbol = new ArbolBinarioExp(cadena.replaceAll("\\s+", ""));
                 lienzo.setArbol(arbol);
             }
