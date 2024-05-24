@@ -4,6 +4,7 @@
  */
 package org.umg.compiladores;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import javax.swing.JPanel;
@@ -19,7 +20,7 @@ public class LienzoArbol extends JPanel {
     public static final int RADIO = DIAMETRO/2;
     public static final int ANCHO = 30;
     private int alturaDeEspacioAparicionArbol = 10;
-    private static final int ESPACIO_ENTRE_ARBOLES = 100; // Espacio en blanco entre árboles
+    private static final int ESPACIO_ENTRE_ARBOLES = 70; // Espacio en blanco entre árboles
     
     public void setArbol(ArbolBinarioExp arbol) {
         this.arboles.add(arbol);
