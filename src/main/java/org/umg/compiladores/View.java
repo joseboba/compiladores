@@ -69,178 +69,177 @@ public class View {
     }
 
     public void analizadorSintactico(FileReader fileReader){
-        JOptionPane.showMessageDialog(null, "Se finalizó el análisis sintáctico, todo está correcto");
-        this.crearArbol(fileReader);
-//        errores.clear();
-//        String[] valores = fileService.datos.split(" ");
-//        String valorDeWhile = "";
-//        int caracteresWhile = 0;
-//        boolean seEstaValidandoCicloWhile = false;
-//        for(int i=0;i<valores.length; i++){
-//
-//            if(validarToken(valores[i])){
-//                // validacion de ciclo while
-//                if(valores[i].toLowerCase().equals("while") || seEstaValidandoCicloWhile) {
-//                    seEstaValidandoCicloWhile = true;
-//                    if(caracteresWhile <= 10){
-//                        caracteresWhile++;
-//                        valorDeWhile += valores[i] + " ";
-//
-//                        if(i==valores.length - 1){
-//
-//                            if(!valorDeWhile.equals("while ( true ) { int valor = 2 ; } ")){
-//                                errores.add("Ciclo while inválido: " + valorDeWhile + " ");
-//                            }
-//                            valorDeWhile = "";
-//                            seEstaValidandoCicloWhile = false;
-//                        }
-//                    } else {
-//                        caracteresWhile = 0;
-//                        seEstaValidandoCicloWhile = false;
-//
-//                        if(!valorDeWhile.equals("while ( true ) { int valor = 2 ; } ")){
-//                            errores.add("Ciclo while inválido: " + valorDeWhile + " ");
-//                        }
-//                        valorDeWhile = "";
-//                    }
-//                }
-//
-//                // se valida orden de asignación de un valor a identificador
-//                if(valores[i].equals("=") && i - 2 >= 0){
-//                    if(valores[i-2] != null && valores[i-1] != null && valores[i+1] != null){
-//                        if(expresionIdentificador.matcher(valores[i-2]).matches()
-//                           && valores[i-1].toLowerCase().equals("int")
-//                           && expresionNumeros.matcher(valores[i+1]).matches()){
-//                            errores.add("No es el orden esperado para declarar variables: " + valores[i-2] + " " +
-//                                valores[i-1] + " " + valores[i] + " " + valores[i+1]);
-//                        }
-//                    }
-//                }
-//
-//
-//                // se valida se espera un operador y se espera un punto y coma int identificador = valor ;
-//                if(expresionIdentificador.matcher(valores[i]).matches()
-//                        && !palabrasReservadas.contains(valores[i])
-//                        && i > 0 && i < valores.length - 1){
-//
-//                    if(valores[i-1] != null && valores[i+1] != null){
-//                        if(valores[i-1].toLowerCase().equals("int")
-//                                && expresionNumeros.matcher(valores[i+1]).matches() &&
-//                                !valores[i+1].equals("=")){
-//                            errores.add("Se espera un operador para declarar bien la variable: " + valores[i-1] + " " +
-//                                valores[i] + " " + valores[i+1] + " ");
-//                        } else if (i + 3 < valores.length - 1 ) {
-//
-//                            if(valores[i-1].toLowerCase().equals("int") && valores[i+1].equals("=") &&
-//                                 !valores[i+3].equals(";")){
-//                                errores.add("Se espera un punto y coma para declarar variable: " + valores[i-1] + " " +
-//                                valores[i] + " " + valores[i+1] + " " + valores[i+2] + " ");
-//                            }
-//                        }
-//                    }
-//                }
-//
-//                // se valida que al declarar variable tipo int se coloque un identificador
-//                if(valores[i].equals("int") && valores.length <= 4){
-//                    if(!expresionIdentificador.matcher(valores[i+1]).matches()){
-//                        errores.add("Se espera un identificador en: " + valores[i] + " " +
-//                                valores[i+1] + " ");
-//                    }
-//                }
-//
-//
-//                // se valida se espera una expresión y se espera un signo de agrupación
-//                if(valores[i].toLowerCase().equals("do")){
-//                    if(i+1 < valores.length - 1){
-//                        if(valores[i+1] != null && valores[i+2] != null){
-//                            if(valores[i+1].equals("{") && valores[i+2].equals("}")){
-//                                errores.add("Se espera una expresión dentro del ciclo: "
-//                                        + valores[i] + " " +
-//                                    valores[i+1] + " " + valores[i+2]);
-//                            } else if (!valores[i+1].equals("{")) {
-//                                errores.add("Se espera un signo de agrupación: " + valores[i] + " " +
-//                                    valores[i+1] + " ");
-//                            }
-//                        }
-//                    } else if (valores[i+1] != null) {
-//                            if(!expresionAgrupadores.matcher(valores[i+1]).matches()){
-//                                errores.add("Se espera un signo de agrupación: " + valores[i] + " " +
-//                                    valores[i+1]+ "  ");
-//                            }
-//                    }
-//                }
-//
-//                /// se valida palabra reservada
-//                if(valores[i].equals("public")){
-//                    if(valores[i+1] != null){
-//                        if(!valores[i+1].toLowerCase().equals("class")
-//                                || !valores[i+1].equals("int")){
-//                            errores.add("Se espera una palabra reservada válida luego de public: "
-//                                    + valores[i] + " " +
-//                                valores[i+1]);
-//                        }
-//                    }
-//                }
-//
-//                // se valida uso de expresión else
-//                if(valores[i].equals("else") && i > 0 && i < valores.length - 1){
-//                    if(valores[i-1] != null && valores[i+1] != null) {
-//                        if(!valores[i-1].equals("}") || !valores[i].equals("else")
-//                                || !valores[i+1].equals("{") ){
-//                            errores.add("Uso de palabra else incorrecto, debe usarse como } else { se uso así: "
-//                                    + valores[i-1] + " " + valores[i] + " " + valores[i+1]);
-//                        }
-//                    }
-//                } else if(valores[i].equals("else")) {
-//                    errores.add("Uso de palabra else incorrecto, debe usarse como } else { se uso así: " + valores[i]);
-//                }
-//
-//                // validación de expresión aritmética
-//              /*  if(operadores.contains(valores[i]) && i < valores.length
-//                        && !valores[i].equals("=")
-//                        && !valores[i].equals("==") && !valores[i-1].equals(")")
-//                        && !valores[i+1].equals("(")){
-//
-//                    if(!expresionNumeros.matcher(valores[i-1]).matches() ||
-//                       !expresionNumeros.matcher(valores[i+1]).matches()){
-//                        errores.add("Expresión aritmética incorrecta : "
-//                                    + valores[i-1] + " " + valores[i] + " " + valores[i+1]);
-//                    }
-//                } else if (operadores.contains(valores[i]) && !valores[i].equals("=") &&
-//                        !valores[i].equals("==") && !valores[i-1].equals(")")
-//                        && !valores[i+1].equals("(")){
-//                    errores.add("Expresión aritmética incorrecta : "
-//                                    + valores[i-1] + " " + valores[i]);
-//                }*/
-//
-//                // validación inicio de if
-//                if(valores[i].equals("if") && i < valores.length) {
-//                    if(!valores[i+1].equals("(")){
-//                        errores.add("Inicio de declaración if incorrecta : "
-//                            + valores[i] + " " + valores[i+1]);
-//                    }
-//                }
-//
-//            } else {
-//                if(!valores[i].trim().equals(" ") && !valores[i].equals("") && !valores[i].equals("\n")){
-//                    errores.add(valores[i]);
-//                }
-//            }
-//        }
-//
-//        if(errores.isEmpty()){
-//          JOptionPane.showMessageDialog(null, "Se finalizó el análisis sintáctico, todo está correcto");
-//          this.crearArbol();
-//        } else {
-//            String mensaje = "";
-//
-//            for(int i=0; i<errores.size(); i++) {
-//                mensaje = mensaje + errores.get(i) + "\n";
-//            }
-//           JOptionPane.showMessageDialog(null, "Hay error en la sintaxis \nLos errores son los siguientes: \n" + mensaje);
-//        }
-//
-//        errores.clear();
+       
+        errores.clear();
+        String[] valores = fileService.datos.split(" ");
+        String valorDeWhile = "";
+        int caracteresWhile = 0;
+        boolean seEstaValidandoCicloWhile = false;
+        for(int i=0;i<valores.length; i++){
+
+            if(validarToken(valores[i])){
+                
+                // validacion de ciclo while
+                if(valores[i].toLowerCase().equals("while") || seEstaValidandoCicloWhile) {
+                    seEstaValidandoCicloWhile = true;
+                    if(caracteresWhile <= 10){
+                        caracteresWhile++;
+                        valorDeWhile += valores[i] + " ";
+
+                        if(i==valores.length - 1){
+                            if(!valorDeWhile.equals("while ( true ) { int valor = 2 ; } ")){
+                                errores.add("Ciclo while inválido: " + valorDeWhile + " ");
+                            }
+                            valorDeWhile = "";
+                            seEstaValidandoCicloWhile = false;
+                        }
+                    } else {
+                        caracteresWhile = 0;
+                        seEstaValidandoCicloWhile = false;
+
+                        if(!valorDeWhile.equals("while ( true ) { int valor = 2 ; } ")){
+                            errores.add("Ciclo while inválido: " + valorDeWhile + " ");
+                        }
+                        valorDeWhile = "";
+                    }
+                }
+
+                // se valida orden de asignación de un valor a identificador
+                if(valores[i].equals("=") && i - 2 >= 0){
+                   if(valores[i-2] != null && valores[i-1] != null && valores[i+1] != null){
+                        if(expresionIdentificador.matcher(valores[i-2]).matches()
+                           && valores[i-1].toLowerCase().equals("int")
+                           && expresionNumeros.matcher(valores[i+1]).matches()){
+                            errores.add("No es el orden esperado para declarar variables: " + valores[i-2] + " " +
+                                valores[i-1] + " " + valores[i] + " " + valores[i+1]);
+                        }
+                    }
+                }
+
+
+                // se valida se espera un operador y se espera un punto y coma int identificador = valor ;
+                if(expresionIdentificador.matcher(valores[i]).matches()
+                        && !palabrasReservadas.contains(valores[i])
+                        && i > 0 && i < valores.length - 1){
+
+                    if(valores[i-1] != null && valores[i+1] != null){
+                        if(valores[i-1].toLowerCase().equals("int")
+                                && expresionNumeros.matcher(valores[i+1]).matches() &&
+                                !valores[i+1].equals("=")){
+                            errores.add("Se espera un operador para declarar bien la variable: " + valores[i-1] + " " +
+                                valores[i] + " " + valores[i+1] + " ");
+                        } else if (i + 3 < valores.length - 1 ) {
+
+                            if(valores[i-1].toLowerCase().equals("int") && valores[i+1].equals("=") &&
+                                 !valores[i+3].equals(";")){
+                                errores.add("Se espera un punto y coma para declarar variable: " + valores[i-1] + " " +
+                                valores[i] + " " + valores[i+1] + " " + valores[i+2] + " ");
+                            }
+                        }
+                    }
+                }
+
+                // se valida que al declarar variable tipo int se coloque un identificador
+                if(valores[i].equals("int") && valores.length <= 4){
+                    if(!expresionIdentificador.matcher(valores[i+1]).matches()){
+                        errores.add("Se espera un identificador en: " + valores[i] + " " +
+                                valores[i+1] + " ");
+                    }
+                }
+
+
+                // se valida se espera una expresión y se espera un signo de agrupación
+                if(valores[i].toLowerCase().equals("do")){
+                    if(i+1 < valores.length - 1){
+                        if(valores[i+1] != null && valores[i+2] != null){
+                            if(valores[i+1].equals("{") && valores[i+2].equals("}")){
+                                errores.add("Se espera una expresión dentro del ciclo: "
+                                        + valores[i] + " " +
+                                    valores[i+1] + " " + valores[i+2]);
+                            } else if (!valores[i+1].equals("{")) {
+                                errores.add("Se espera un signo de agrupación: " + valores[i] + " " +
+                                   valores[i+1] + " ");
+                            }
+                        }
+                    } else if (valores[i+1] != null) {
+                            if(!expresionAgrupadores.matcher(valores[i+1]).matches()){
+                                errores.add("Se espera un signo de agrupación: " + valores[i] + " " +
+                                    valores[i+1]+ "  ");
+                            }
+                    }
+                }
+
+                /// se valida palabra reservada
+                if(valores[i].equals("public")){
+                    if(valores[i+1] != null){
+                        if(!valores[i+1].toLowerCase().equals("class")
+                                || !valores[i+1].equals("int")){
+                            errores.add("Se espera una palabra reservada válida luego de public: "
+                                    + valores[i] + " " +
+                                valores[i+1]);
+                        }
+                    }
+                }
+
+                // se valida uso de expresión else
+                if(valores[i].equals("else") && i > 0 && i < valores.length - 1){
+                    if(valores[i-1] != null && valores[i+1] != null) {
+                        if(!valores[i-1].equals("}") || !valores[i].equals("else")
+                                || !valores[i+1].equals("{") ){
+                            errores.add("Uso de palabra else incorrecto, debe usarse como } else { se uso así: "
+                                    + valores[i-1] + " " + valores[i] + " " + valores[i+1]);
+                        }
+                    }
+                } else if(valores[i].equals("else")) {
+                    errores.add("Uso de palabra else incorrecto, debe usarse como } else { se uso así: " + valores[i]);
+                }
+
+                // validación de expresión aritmética
+              /*  if(operadores.contains(valores[i]) && i < valores.length
+                        && !valores[i].equals("=")
+                        && !valores[i].equals("==") && !valores[i-1].equals(")")
+                        && !valores[i+1].equals("(")){
+
+                    if(!expresionNumeros.matcher(valores[i-1]).matches() ||
+                       !expresionNumeros.matcher(valores[i+1]).matches()){
+                        errores.add("Expresión aritmética incorrecta : "
+                                    + valores[i-1] + " " + valores[i] + " " + valores[i+1]);
+                    }
+               } else if (operadores.contains(valores[i]) && !valores[i].equals("=") &&
+                        !valores[i].equals("==") && !valores[i-1].equals(")")
+                        && !valores[i+1].equals("(")){
+                    errores.add("Expresión aritmética incorrecta : "
+                                    + valores[i-1] + " " + valores[i]);
+                }*/
+
+                // validación inicio de if
+                if(valores[i].equals("if") && i < valores.length) {
+                    if(!valores[i+1].equals("(")){
+                        errores.add("Inicio de declaración if incorrecta : "
+                            + valores[i] + " " + valores[i+1]);
+                    }
+                }
+
+            } else {
+                if(!valores[i].trim().equals(" ") && !valores[i].equals("") && !valores[i].equals("\n")){
+                   //errores.add(valores[i]);
+                }
+            }
+        }
+
+        if(errores.isEmpty()){
+          JOptionPane.showMessageDialog(null, "Se finalizó el análisis sintáctico, todo está correcto");
+          this.crearArbol(fileReader);
+        } else {
+            String mensaje = "";
+
+            for(int i=0; i<errores.size(); i++) {
+                mensaje = mensaje + errores.get(i) + "\n";
+            }
+           JOptionPane.showMessageDialog(null, "Hay error en la sintaxis \nLos errores son los siguientes: \n" + mensaje);
+        }
+
+        errores.clear();
     }
     
     public boolean validarToken(String valor) {
