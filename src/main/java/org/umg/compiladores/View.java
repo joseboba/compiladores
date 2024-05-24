@@ -226,7 +226,8 @@ public class View {
                 }
             }
         }
-
+   
+        
         if(errores.isEmpty()){
           JOptionPane.showMessageDialog(null, "Se finalizó el análisis sintáctico, todo está correcto");
           this.crearArbol(fileReader);
